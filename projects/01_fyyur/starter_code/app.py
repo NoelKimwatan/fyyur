@@ -44,7 +44,7 @@ class Venue(db.Model):
     facebook_link = db.Column(db.String(120),nullable=True)
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
-    website_link = db.Column(db.String(500),nullable=True)
+    website = db.Column(db.String(500),nullable=True)
     seeking_talent = db.Column(db.Boolean,default=False)
     seeking_description = db.Column(db.String(200))
     genres = db.Column(db.String(500)) #Take a closer look at this
@@ -161,6 +161,7 @@ def create_venue_form():
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
+  error = False
 
   new_venue = Venue(
       name = request.form.get("name"), 
@@ -175,8 +176,11 @@ def create_venue_submission():
       seeking_talent = True if request.form.get("seeking_talent") == 'y' else False,
       seeking_description = request.form.get("seeking_description")
   )
+
+  print("Trying to add new venue")
   db.session.add(new_venue)
   db.session.commit()
+
   # TODO: modify data to be the data object returned from db insertion
 
   # on successful db insert, flash success
