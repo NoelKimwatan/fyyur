@@ -1,5 +1,6 @@
 
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 db = SQLAlchemy()
 
 
@@ -20,8 +21,6 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.Boolean,default=False)
     seeking_description = db.Column(db.String(200))
     genres = db.Column(db.String(500)) #Take a closer look at this
-    past_shows_count= db.Column(db.Integer)
-    upcoming_shows_count = db.Column(db.Integer)
     all_shows = db.relationship('Show',backref='Venue',lazy=True,collection_class=list)
 
     def __repr__(self):
@@ -29,6 +28,32 @@ class Venue(db.Model):
 
     def __str__(self):
         return str(self.name)
+
+    @property
+    def upcoming_shows(self):
+        upcoming_shows = list()
+        for show in self.all_shows:
+            if datetime.strptime(show.start_time,"%a %m, %d, %Y %I:%M%p") >= datetime.now():
+                upcoming_shows.append(show)
+
+        return upcoming_shows
+
+    @property
+    def past_shows(self):
+        past_shows = list()
+        for show in self.all_shows:
+            if datetime.strptime(show.start_time,"%a %m, %d, %Y %I:%M%p") < datetime.now():
+                past_shows.append(show)
+
+        return past_shows
+
+    @property
+    def past_shows_count(self):
+        return len(self.past_shows)
+
+    @property
+    def upcoming_shows_count(self):
+        return len(self.upcoming_shows)
 
 
   
@@ -60,7 +85,31 @@ class Artist(db.Model):
         return str(self.name)
 
 
+    @property
+    def upcoming_shows(self):
+        upcoming_shows = list()
+        for show in self.all_shows:
+            if datetime.strptime(show.start_time,"%a %m, %d, %Y %I:%M%p") >= datetime.now():
+                upcoming_shows.append(show)
 
+        return upcoming_shows
+
+    @property
+    def past_shows(self):
+        past_shows = list()
+        for show in self.all_shows:
+            if datetime.strptime(show.start_time,"%a %m, %d, %Y %I:%M%p") < datetime.now():
+                past_shows.append(show)
+
+        return past_shows
+
+    @property
+    def past_shows_count(self):
+        return len(self.past_shows)
+
+    @property
+    def upcoming_shows_count(self):
+        return len(self.upcoming_shows)
 
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
