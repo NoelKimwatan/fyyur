@@ -61,14 +61,18 @@ def venues():
   data = list()
 
   states = list({venue.state for venue in venues})
-  states_cities = {state:[venue.city for venue in Venue.query.filter(Venue.state == state).all()] for state in states}
+  print("States")
+  states_cities = {state:{venue.city for venue in Venue.query.filter(Venue.state == state).all()} for state in states}
   print("State cities",states_cities)
 
   data =list()
 
   for state in states:
+    print("Print state",state)
     cities = states_cities[state]
+    print("Cities in state",cities)
     for city in cities:
+      print("Loop city")
       temp =dict()
       temp["state"] = state
       temp["city"] = city
