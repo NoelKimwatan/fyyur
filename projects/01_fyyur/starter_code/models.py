@@ -69,7 +69,6 @@ class Show(db.Model):
     __tablename__ = 'Show'
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String,nullable=True)
-    image_link = db.Column(db.String(500),nullable=True)
     start_time = db.Column(db.String(30),nullable=False)
 
     artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'),nullable=False)
@@ -90,5 +89,9 @@ class Show(db.Model):
     @property
     def artist_name(self):
         return self.Artist.name
+
+    @property
+    def artist_image_link(self):
+        return self.Artist.image_link
 
 

@@ -57,23 +57,26 @@ def index():
 @app.route('/venues')
 def venues():
   #Query all the venues
-  # venues = Venue.query.all()
-  # city_state = 
-  # cities = list({venue.city for venue in venues})
-  # data =list()
+  venues = Venue.query.all()
+  data = list()
 
-  # for city in cities:
-  #   dict_dict = dict()
-  #   dict_dict[city] = city
-  #   dict_dict["venues"] = Venue.query.filter(Venue.city ==city).all()
+  states = list({venue.state for venue in venues})
+  states_cities = {state:[venue.city for venue in Venue.query.filter(Venue.state == state).all()] for state in states}
+  print("State cities",states_cities)
 
-  # data = list()
-  # for venue in venues:
-  #   pass
+  data =list()
+
+  for state in states:
+    cities = states_cities[state]
+    for city in cities:
+      temp =dict()
+      temp["state"] = state
+      temp["city"] = city
+      temp["venues"] = Venue.query.filter(Venue.state == state, Venue.city == city).all()
+      data.append(temp)
 
 
-  real_data = Venue.query.all()
-  return render_template('pages/venues.html', areas=real_data)
+  return render_template('pages/venues.html', areas=data)
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
