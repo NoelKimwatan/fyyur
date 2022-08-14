@@ -120,8 +120,8 @@ class Show(db.Model):
     name = db.Column(db.String,nullable=True)
     start_time = db.Column(db.String(30),nullable=False)
 
-    artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'),nullable=False)
-    venue_id = db.Column(db.Integer,db.ForeignKey('Venue.id'),nullable=False)
+    artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'),nullable=True)
+    venue_id = db.Column(db.Integer,db.ForeignKey('Venue.id'),nullable=True)
 
 
     def __repr__(self):
@@ -133,14 +133,23 @@ class Show(db.Model):
 
     @property
     def venue_name(self):
-        return self.Venue.name
+        try:
+            return self.Venue.name
+        except:
+            return "Venue Deleted"
 
     @property
     def artist_name(self):
-        return self.Artist.name
+        try:
+            return self.Artist.name
+        except:
+            return "Artist deleted"
 
     @property
     def artist_image_link(self):
-        return self.Artist.image_link
+        try:
+            return self.Artist.image_link
+        except:
+            return "Artist deleted"
 
 
