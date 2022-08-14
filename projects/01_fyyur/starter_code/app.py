@@ -322,7 +322,11 @@ def create_artist_submission():
 @app.route('/shows')
 def shows():
   #Query all shows
+
   real_data = Show.query.all() 
+  for data in real_data:
+    print("Venue name",data.venue_name)
+    print("Artist name",data.artist_name)
   return render_template('pages/shows.html', shows=real_data)
 
 @app.route('/shows/create')

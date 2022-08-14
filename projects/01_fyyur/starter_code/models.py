@@ -24,6 +24,12 @@ class Venue(db.Model):
     upcoming_shows_count = db.Column(db.Integer)
     all_shows = db.relationship('Show',backref='Venue',lazy=True,collection_class=list)
 
+    def __repr__(self):
+        return str(self.name)
+
+    def __str__(self):
+        return str(self.name)
+
 
   
 
@@ -47,6 +53,12 @@ class Artist(db.Model):
     upcoming_shows_count = db.Column(db.Integer)
     all_shows = db.relationship('Show',backref='Artist',lazy=True,collection_class=list)
 
+    def __repr__(self) :
+        return str(self.name)
+
+    def __str__(self):
+        return str(self.name)
+
 
 
 
@@ -54,12 +66,29 @@ class Artist(db.Model):
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
 class Show(db.Model):
-  __tablename__ = 'Show'
-  id = db.Column(db.Integer,primary_key=True)
-  name = db.Column(db.String,nullable=True)
-  image_link = db.Column(db.String(500),nullable=True)
-  start_time = db.Column(db.String(30),nullable=False)
+    __tablename__ = 'Show'
+    id = db.Column(db.Integer,primary_key=True)
+    name = db.Column(db.String,nullable=True)
+    image_link = db.Column(db.String(500),nullable=True)
+    start_time = db.Column(db.String(30),nullable=False)
 
-  artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'),nullable=False)
-  venue_id = db.Column(db.Integer,db.ForeignKey('Venue.id'),nullable=False)
+    artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'),nullable=False)
+    venue_id = db.Column(db.Integer,db.ForeignKey('Venue.id'),nullable=False)
+
+
+    def __repr__(self):
+        return str(self.name)
+
+
+    def __str__(self):
+        return str(self.name)
+
+    @property
+    def venue_name(self):
+        return self.Venue.name
+
+    @property
+    def artist_name(self):
+        return self.Artist.name
+
 
