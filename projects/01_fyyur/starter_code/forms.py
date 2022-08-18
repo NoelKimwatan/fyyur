@@ -203,7 +203,7 @@ class ArtistForm(Form):
     )
     phone = StringField(
         # TODO implement validation logic for phone 
-        'phone',validators=[DataRequired()]
+        'phone',validators=[DataRequired(),validate_phone]
     )
     image_link = StringField(
         'image_link'
