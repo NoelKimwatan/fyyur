@@ -15,7 +15,7 @@ from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
 from flask_migrate import Migrate
-from datetime import datetime
+from datetime import date, datetime
 
 from models import *
 #----------------------------------------------------------------------------#
@@ -99,7 +99,21 @@ def search_venues():
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
   #Query all venues
-  venue = Venue.query.get(venue_id)
+  venue = Venue.query.get(venue_id) #"%a %m, %d, %Y %I:%M%p"
+
+  print(type(Show.query.all()[0].start_time))
+  print(datetime.now())
+
+
+
+
+  past_shows = db.session.query(Show).join(Venue).filter(Show.venue_id==Venue.id).filter(Show.start_time <= str(datetime.now())).all()
+  upcoming_shows = db.session.query(Show).join(Venue).filter(Show.venue_id==Venue.id).filter(Show.start_time > str(datetime.now())).all()
+
+  venue = venue.__dict__
+  venue["past_shows"] = past_shows
+  venue["upcoming_shows"] = upcoming_shows
+
   
   return render_template('pages/show_venue.html', venue=venue)
 
@@ -128,10 +142,27 @@ def create_venue_submission():
       seeking_talent = True if request.form.get("seeking_talent") == 'y' else False,
       seeking_description = request.form.get("seeking_description")
   )
+  form = VenueForm(request.form)
+  print(form.genres.data)
 
   print("Trying to add new venue")
   #Implementing the new venue insert with a try catch statement
   try:
+    form = VenueForm(request.form)
+    new_venue = Venue(
+      name = form.name.data,
+      city = form.city.data,
+      state = form.state.data,
+      address = form.address.data,
+      phone = form.phone.data,
+      genres = form.genres.data,
+      facebook_link = form.facebook_link.data,
+      image_link = form.image_link.data,
+      website = form.website_link.data,
+      seeking_talent = form.seeking_talent.data,
+      seeking_description = form.seeking_description.data
+  )
+
     db.session.add(new_venue)
     db.session.commit()
     flash('Venue ' + request.form['name'] + ' was successfully listed!')
@@ -204,6 +235,15 @@ def search_artists():
 def show_artist(artist_id):
   #Quering all artists
   artist = Artist.query.get(artist_id)
+
+  past_shows = db.session.query(Show).join(Artist).filter(Show.venue_id==Artist.id).filter(Show.start_time <= str(datetime.now())).all()
+  upcoming_shows = db.session.query(Show).join(Artist).filter(Show.venue_id==Artist.id).filter(Show.start_time > str(datetime.now())).all()
+
+  artist = artist.__dict__
+  artist["past_shows"] = past_shows
+  artist["upcoming_shows"] = upcoming_shows
+
+
   return render_template('pages/show_artist.html', artist=artist)
 
 #  Update
@@ -353,15 +393,19 @@ def create_shows():
 def create_show_submission():
   
   #Converting start time dat format into the appropriate format
-  start_time = format_datetime(request.form.get("start_time"))
+
+
+  start_time_object = request.form.get("start_time")
 
 
   new_show = Show(
     artist_id = request.form.get("artist_id"),
     venue_id = request.form.get("venue_id"),
-    start_time = start_time
+    start_time = start_time_object
   )
 
+  db.session.add(new_show)
+  db.session.commit()
 
 
   try:
