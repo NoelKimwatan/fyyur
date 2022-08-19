@@ -21,30 +21,16 @@ class Venue(db.Model):
     website = db.Column(db.String(500),nullable=True)
     seeking_talent = db.Column(db.Boolean,default=False)
     seeking_description = db.Column(db.String(200))
-    genres = db.Column(db.String(500)) #Take a closer look at this
+    genres = db.Column(db.ARRAY(db.String), nullable=False)
     all_shows = db.relationship('Show',backref='Venue',lazy=True,collection_class=list)
 
-    # def __repr__(self):
-    #     return str(self.name)
+    def __repr__(self):
+        return str(self.name)
 
-    # def __str__(self):
-    #     return str(self.name)
+    def __str__(self):
+        return str(self.name)
 
-    @property
-    def upcoming_shows(self):
-        return self.upcoming_shows
 
-    @property
-    def past_shows(self):
-        return self.past_shows
-
-    # @property
-    # def past_shows_count(self):
-    #     return len(self.past_shows)
-
-    # @property
-    # def upcoming_shows_count(self):
-    #     return len(self.upcoming_shows)
 
 
   
@@ -57,7 +43,7 @@ class Artist(db.Model):
     city = db.Column(db.String(120),nullable=False)
     state = db.Column(db.String(120),nullable=False)
     phone = db.Column(db.String(120),nullable=False)
-    genres = db.Column(db.String(120),nullable=False)
+    genres = db.Column(db.ARRAY(db.String), nullable=False)
     image_link = db.Column(db.String(500),nullable=True)
     facebook_link = db.Column(db.String(120),nullable=True)
 
@@ -75,32 +61,6 @@ class Artist(db.Model):
     def __str__(self):
         return str(self.name)
 
-
-    # @property
-    # def upcoming_shows(self):
-    #     upcoming_shows = list()
-    #     for show in self.all_shows:
-    #         if datetime.strptime(show.start_time,"%a %m, %d, %Y %I:%M%p") >= datetime.now():
-    #             upcoming_shows.append(show)
-
-    #     return upcoming_shows
-
-    # @property
-    # def past_shows(self):
-    #     past_shows = list()
-    #     for show in self.all_shows:
-    #         if datetime.strptime(show.start_time,"%a %m, %d, %Y %I:%M%p") < datetime.now():
-    #             past_shows.append(show)
-
-    #     return past_shows
-
-    # @property
-    # def past_shows_count(self):
-    #     return len(self.past_shows)
-
-    # @property
-    # def upcoming_shows_count(self):
-    #     return len(self.upcoming_shows)
 
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.

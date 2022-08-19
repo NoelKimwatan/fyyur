@@ -1,16 +1,30 @@
 from datetime import datetime
+from wsgiref.validate import validator
 from flask_wtf import Form
+from flask_wtf import FlaskForm as Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
 from wtforms.validators import DataRequired, AnyOf, URL,Length,Regexp
 import re
 from wtforms import ValidationError
 
+def validate_phone(Form, phone):
+    ke_phone_num = '^[+][1-9]{3}[0-9]{9}$'
+    match = re.search(ke_phone_num, phone.data)
+    if not match:
+        raise ValidationError('Error, phone number must be in format +xxxxxxxxxxxx')
+
+def validate_integer(Form,value):
+    try:
+        valid_int = int(value.data)
+    except:
+        raise ValidationError('Error, please enter a valid integer')
+
 class ShowForm(Form):
     artist_id = StringField(
-        'artist_id'
+        'artist_id',validators=[DataRequired(),validate_integer]
     )
     venue_id = StringField(
-        'venue_id'
+        'venue_id',validators=[DataRequired(),validate_integer]
     )
     start_time = DateTimeField(
         'start_time',
@@ -18,11 +32,7 @@ class ShowForm(Form):
         default= datetime.today()
     )
 
-def validate_phone(form, phone):
-    us_phone_num = '^([0-9]{3})[-][0-9]{3}[-][0-9]{4}$'
-    match = re.search(us_phone_num, phone.data)
-    if not match:
-        raise ValidationError('Error, phone number must be in format xxx-xxx-xxxx')
+
 
 class VenueForm(Form):
     name = StringField(
@@ -92,11 +102,11 @@ class VenueForm(Form):
     )
     phone = StringField(
         'phone',
-        validators=[validate_phone] 
+        validators=[validate_phone,DataRequired()] 
 
     )
     image_link = StringField(
-        'image_link'
+        'image_link',validators=[URL()]
     )
     genres = SelectMultipleField(
         # TODO implement enum restriction
@@ -127,7 +137,7 @@ class VenueForm(Form):
         'facebook_link', validators=[URL(),Length(min=2,max=120)]
     )
     website_link = StringField(
-        'website_link'
+        'website_link', validators=[URL()]
     )
 
     seeking_talent = BooleanField( 'seeking_talent' )
@@ -206,7 +216,7 @@ class ArtistForm(Form):
         'phone',validators=[DataRequired(),validate_phone]
     )
     image_link = StringField(
-        'image_link'
+        'image_link',validators=[URL()]
     )
     genres = SelectMultipleField(
         'genres', validators=[DataRequired()],
@@ -238,7 +248,7 @@ class ArtistForm(Form):
      )
 
     website_link = StringField(
-        'website_link'
+        'website_link',validators=[URL()]
      )
 
     seeking_venue = BooleanField( 'seeking_venue' )
